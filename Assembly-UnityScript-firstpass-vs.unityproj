@@ -48,7 +48,26 @@
      <Compile Include="Assets\Standard Assets\Scripts\Camera Scripts\SmoothFollow.js" />
      <Compile Include="Assets\Standard Assets\Scripts\Camera Scripts\SmoothLookAt.js" />
      <Compile Include="Assets\Standard Assets\Scripts\General Scripts\DragRigidbody.js" />
+     <None Include="Assets\AForge.Imaging.Formats.xml" />
+     <None Include="Assets\AForge.Imaging.xml" />
      <None Include="Assets\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
+     <None Include="Assets\AForge.xml" />
+     <None Include="Assets\AForge.Math.xml" />
+ <Reference Include="AForge">
+ <HintPath>Assets\AForge.dll</HintPath>
+ </Reference>
+ <Reference Include="AForge.Imaging">
+ <HintPath>Assets\AForge.Imaging.dll</HintPath>
+ </Reference>
+ <Reference Include="AForge.Imaging.Formats">
+ <HintPath>Assets\AForge.Imaging.Formats.dll</HintPath>
+ </Reference>
+ <Reference Include="AForge.Imaging.IPPrototyper">
+ <HintPath>Assets\AForge.Imaging.IPPrototyper.dll</HintPath>
+ </Reference>
+ <Reference Include="AForge.Math">
+ <HintPath>Assets\AForge.Math.dll</HintPath>
+ </Reference>
  <Reference Include="C5">
  <HintPath>Assets\C5.dll</HintPath>
  </Reference>

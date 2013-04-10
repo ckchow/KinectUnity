@@ -1,9 +1,9 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using MathNet.Numerics.LinearAlgebra;
 using KdTree;
 using System.IO;
-
 
 public class KinectClouds : MonoBehaviour
 {
@@ -13,6 +13,8 @@ public class KinectClouds : MonoBehaviour
     int imHeight;
     int dWidth;
     int dHeight;
+
+    List<PointCloud> clouds;
 
     int index;
     string filePath = @"C:\temp\ZIG\";
@@ -26,12 +28,18 @@ public class KinectClouds : MonoBehaviour
         dWidth = 0;
         dHeight = 0;
         ZigInput.Instance.AddListener(gameObject); // I don't know what this does
+
+        clouds = new List<PointCloud>();
     }
 
-
+	void Update()
+	{
+		
+	}
 
     void OnGUI()
     {
+        #region DEBUG BUTTON
         // a button to capture the current point cloud into a KD tree
         if (GUI.Button(new Rect(10, 10, 80, 20), "Yay Cloud"))
         {
@@ -55,7 +63,7 @@ public class KinectClouds : MonoBehaviour
                 System.IO.Path.Combine(filePath, "zigC" + index.ToString() + ".bmp");
             // we have to do this in a smarter way or else the file will be huge.
             byte[] colors = new byte[4 * rawImageMap.Length]; // veryu lkarge
-            for (int i = 0; i < rawImageMap.Length; i++)
+            for (int i = 0; i < rawImageMap.Length; i+=4)
             {
                 colors[i] = rawImageMap[i].a;
                 colors[i + 1] = rawImageMap[i].r;
@@ -71,7 +79,9 @@ public class KinectClouds : MonoBehaviour
                 int x = i % imWidth;
                 int y = i / imWidth;
 
-                worldPoints.Add(ZigInput.ConvertImageToWorldSpace(new Vector3(x,y)));
+                // the image and the depth are at different scale factors so you have to do something weird to fit them
+
+                worldPoints.Add(ZigInput.ConvertImageToWorldSpace(new Vector3(x,y))); // TODO FIX THIS
             }
             string worldString = "";
             foreach (Vector3 v in worldPoints)
@@ -82,7 +92,14 @@ public class KinectClouds : MonoBehaviour
                 System.IO.Path.Combine(filePath, "zigW" + index.ToString() + ".csv");
             File.WriteAllText(worldPath, worldString);
         }
+        #endregion
 
+        if (GUI.Button(new Rect(10,40,40,20), "fart"))
+        {
+			
+            clouds.Add(new PointCloud(rawDepthMap, dWidth, dHeight, rawImageMap, imWidth, imHeight));
+			Debug.Log("got a cloud");
+        }
     }
 
 
@@ -99,36 +116,5 @@ public class KinectClouds : MonoBehaviour
     }
 }
 
-public class CloudPoint
-{
-    public Color32 color { get; set; }
-    public Vector location { get; set; }
-    public Vector normal { get; set; }
 
-    public CloudPoint(Vector location, Color32 color, Vector normal)
-    {
-        this.location = location;
-        this.color = color;
-        this.normal = normal;
-    }
-}
 
-public class PointCloud
-{
-    // our KD tree of points
-    KdTree<CloudPoint> points;
-
-    // the Zig library handles alignment and stuff so it's ok
-    public PointCloud(short[] depthArray, int depthWidth, int depthheight,
-                      Color32[] colorArray, int colorWidth, int colorHeight)
-    {
-        // we have to downsample or else this point cloud is really, really big.
-        ArrayList cloudPoints = new ArrayList();
-
-        for (int i = 0; i < colorArray.Length; i++)
-        {
-            Color32 c = colorArray[i];
-            // use the mapping function to go from point to point maybe
-        }
-    }
-}

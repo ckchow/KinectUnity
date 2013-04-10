@@ -45,9 +45,12 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Arithmetic.cs" />
+     <Compile Include="Assets\CloudPoint.cs" />
+     <Compile Include="Assets\Extensions.cs" />
      <Compile Include="Assets\KdTree.cs" />
      <Compile Include="Assets\KdTreeNode.cs" />
      <Compile Include="Assets\KinectClouds.cs" />
+     <Compile Include="Assets\PointCloud.cs" />
      <Compile Include="Assets\ZigFu\SampleScenes\_Data\Scripts\ExitOnEscape.cs" />
      <Compile Include="Assets\ZigFu\SampleScenes\_Data\Scripts\HSBColor.cs" />
      <Compile Include="Assets\ZigFu\SampleScenes\_Data\Scripts\MenuController.cs" />
@@ -76,7 +79,26 @@
      <Compile Include="Assets\ZigFu\Scripts\_Internal\Matrix3.cs" />
      <Compile Include="Assets\ZigFu\Scripts\_Internal\TimedBuffer.cs" />
      <Compile Include="Assets\ZigFu\Scripts\_Internal\kinectSpecific.cs" />
+     <None Include="Assets\AForge.Imaging.Formats.xml" />
+     <None Include="Assets\AForge.Imaging.xml" />
      <None Include="Assets\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
+     <None Include="Assets\AForge.xml" />
+     <None Include="Assets\AForge.Math.xml" />
+ <Reference Include="AForge">
+ <HintPath>Assets\AForge.dll</HintPath>
+ </Reference>
+ <Reference Include="AForge.Imaging">
+ <HintPath>Assets\AForge.Imaging.dll</HintPath>
+ </Reference>
+ <Reference Include="AForge.Imaging.Formats">
+ <HintPath>Assets\AForge.Imaging.Formats.dll</HintPath>
+ </Reference>
+ <Reference Include="AForge.Imaging.IPPrototyper">
+ <HintPath>Assets\AForge.Imaging.IPPrototyper.dll</HintPath>
+ </Reference>
+ <Reference Include="AForge.Math">
+ <HintPath>Assets\AForge.Math.dll</HintPath>
+ </Reference>
  <Reference Include="C5">
  <HintPath>Assets\C5.dll</HintPath>
  </Reference>
