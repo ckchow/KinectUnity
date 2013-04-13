@@ -1,20 +1,23 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\PointCloud.cs">
-    <Files>
-      <File FileName="Assets\ZigFu\Scripts\Zig.cs" Line="1" Column="1" />
-      <File FileName="Assets\KinectClouds.cs" Line="96" Column="1" />
-      <File FileName="Assets\ZigFu\Scripts\Viewers\ZigImageViewer.cs" Line="1" Column="1" />
-      <File FileName="Assets\Editor\BuildScenes.cs" Line="1" Column="1" />
-      <File FileName="Assets\ZigFu\Scripts\Viewers\ZigDepthViewer.cs" Line="1" Column="1" />
-      <File FileName="Assets\PointCloud.cs" Line="66" Column="4" />
-    </Files>
+  <MonoDevelop.Ide.Workbench>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Assembly-CSharp" expanded="True">
             <Node name="Assets" expanded="True">
-              <Node name="PointCloud.cs" selected="True" />
+              <Node name="ZigFu" expanded="True">
+                <Node name="Scripts" expanded="True">
+                  <Node name="Viewers" expanded="True" />
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+          <Node name="Assembly-CSharp-Editor" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="Editor" expanded="True">
+                <Node name="BuildScenes.cs" selected="True" />
+              </Node>
             </Node>
           </Node>
         </State>
@@ -24,18 +27,17 @@
       </Pad>
       <Pad Id="MonoDevelop.Debugger.WatchPad">
         <State>
-          <Value>rawDepthMap</Value>
+          <Value>depthToColor</Value>
+          <Value>depthHistogramMap</Value>
+          <Value>colorizedDepth</Value>
         </State>
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="C:\Users\chris\Dropbox\repos\KinectUnity\Assets\KinectClouds.cs" line="57" />
-      <Breakpoint file="C:\Users\chris\Dropbox\repos\KinectUnity\Assets\KinectClouds.cs" line="96" />
+      <Breakpoint file="C:\Users\chris\Dropbox\repos\KinectUnity\Assets\PointCloud.cs" line="99" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches>
-    <Watch file="Assets\KinectClouds.cs" line="60" offsetX="172" offsetY="944" expression="colorString" liveUpdate="False" />
-  </MonoDevelop.Ide.DebuggingService.PinnedWatches>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

@@ -45,28 +45,12 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Editor\BuildScenes.cs" />
-     <None Include="Assets\AForge.Imaging.Formats.xml" />
-     <None Include="Assets\AForge.Imaging.xml" />
      <None Include="Assets\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
-     <None Include="Assets\AForge.xml" />
-     <None Include="Assets\AForge.Math.xml" />
- <Reference Include="AForge">
- <HintPath>Assets\AForge.dll</HintPath>
- </Reference>
- <Reference Include="AForge.Imaging">
- <HintPath>Assets\AForge.Imaging.dll</HintPath>
- </Reference>
- <Reference Include="AForge.Imaging.Formats">
- <HintPath>Assets\AForge.Imaging.Formats.dll</HintPath>
- </Reference>
- <Reference Include="AForge.Imaging.IPPrototyper">
- <HintPath>Assets\AForge.Imaging.IPPrototyper.dll</HintPath>
- </Reference>
- <Reference Include="AForge.Math">
- <HintPath>Assets\AForge.Math.dll</HintPath>
- </Reference>
  <Reference Include="C5">
  <HintPath>Assets\C5.dll</HintPath>
+ </Reference>
+ <Reference Include="Emgu.CV">
+ <HintPath>Assets\Emgu.CV.dll</HintPath>
  </Reference>
  <Reference Include="MathNet.Iridium">
  <HintPath>Assets\MathNet.Iridium.dll</HintPath>
@@ -79,6 +63,9 @@
  </Reference>
  <Reference Include="UnityEditor.Graphs">
  <HintPath>C:\Program Files (x86)\Unity\Editor\Data\Managed\UnityEditor.Graphs.dll</HintPath>
+ </Reference>
+ <Reference Include="Emgu.Util">
+ <HintPath>Assets\Emgu.Util.dll</HintPath>
  </Reference>
   </ItemGroup>
   <ItemGroup>
