@@ -28,12 +28,13 @@ public class PointCloud
     public Matrix<int> FeatureIndices;
 
     public float[] depthHistogramMap;
-    public int MaxDepth = 10000; // this is something that the sensor knows too, don't mess
+    public const int MaxDepth = 10000; // this is something that the sensor knows too, don't mess!
     Color32[] depthToColor;
     public Color32 BaseColor = Color.yellow;
 
-
-    // here's the shitty way to do it.
+    public Matrix R { get; private set; }
+    public Vector T { get; private set; }
+    
     public PointCloud(short[] depth, int dWidth, int dHeight,
                       Color32[] color, int cWidth, int cHeight)
     {
@@ -57,7 +58,7 @@ public class PointCloud
         for (int i = 0; i < depth.Length; i++)
         {
             // the transform that the Zig thing provides expects coordinates in the image plane though
-            if (depth[i] == 0)
+            if ((depth[i] == 0) || (depth[i] == -1))
                 continue; // this is a garbage point
 
             int x = (i % dWidth) * factorX;
@@ -76,34 +77,147 @@ public class PointCloud
         depthToColor = new Color32[MaxDepth];
         colorizedDepth = new Color32[depthX * depthY];
 		
+        
 		UpdateHistogram();
-      }
+
+        this.R = Matrix.Create(new double[,]{{1, 0, 0},
+                                            {0, 1, 0},
+                                            {0, 0, 1}}); // identity rotation
+
+        this.T = Vector.Zeros(3); // zero translation
+
+       
+
+       
+
+        //Transform = new Matrix(new double[,]{{1, 0, 0, 0},
+        //                                     {0, 1, 0, 0},
+        //                                     {0, 0, 1, 0},
+        //                                     {0, 0, 0, 1}}); // homogeneous identity
+
+
+    }
+
+    public void PushOntoCloud(PointCloud other, int iterations, int matchLength)
+    {
+        // we are going to update our transform to place us on the other cloud with the ICP
+
+        //// guess R and T naively
+        //Matrix R = new Matrix(new double[,]{{1, 0, 0},
+        //                                    {0, 1, 0},
+        //                                    {0, 0, 1}}); // identity rotation
+
+        //Vector T = Vector.Zeros(3); // zero translation
+
+        // iterative part
+        for (int i = 0; i < iterations; i++)
+        {
+            #region Correspondence
+            // make the list of matches
+            // NOTE this cannot be a SortedList because that will complain if you give multiple pairs with the same dist
+            List<PointMatch> matches = new List<PointMatch>();
+
+            // go over our list of features
+            foreach (CloudPoint p in this.FeatureTree)
+            {
+                // find nearest in their list of features after our transform 
+                var pT = p.ApplyTransform(R,T);
+
+                CloudPoint o = other.FeatureTree.FindNearestNeighbor(pT.ColorLocation());
+                    
+                PointMatch match = new PointMatch(pT, o);
+
+                matches.Add(match);
+            }
+
+            // select the top n matches based on how close they are
+            var topMatches = matches.OrderBy(x => x.Distance).Take(matchLength);
+            #endregion
+
+            #region find normals for matchpoints
+            var ourQueryPoints = topMatches.Select(x => x.A.UnApplyTransform(R, T));
+            this.CalculateNormals(ourQueryPoints);
+
+            #endregion
+
+
+            #region ICP
+            Matrix cov = new Matrix(6, 6); // I think this makes a 6x6
+            Vector b = new Vector(6);
+
+            foreach (PointMatch pm in topMatches)
+            {
+                //var 
+                // TODO: finish
+            }
+            #endregion
+        }
+
+    }
+
+    private void ApplyTransform()
+    {
+        throw new NotImplementedException("implement this you fucker");
+    }
 
     public void DetectFeatures()
     {
-        const int numFeatures = 15;
-        
+        //const int numFeatures = 15;
+        //const double quality = 5000;
+        //const double minDistance = 50;
+        //const int blockSize = 11;
         
         // note, the histogram is a property of the cloud itself and is updated when the cloud is created
         // load depth image into something that emgucv likes
         Image<Gray, Byte> depthImage = new Image<Gray, byte>(depthX, depthY);
-        PointF hamburger = new PointF();
 
         // have to convert this to gray via luminosity
-        var bytes = colorizedDepth.Select(x => (byte)(0.21*x.r + 0.71*x.g + 0.07*x.b));
+        byte[] bytes = colorizedDepth.Select(x => (byte)(0.21*x.r + 0.71*x.g + 0.07*x.b)).ToArray();
 
-        depthImage.Bytes = bytes.ToArray();
+        depthImage.Bytes = bytes;
 
-        // detect features of depth image using the harris thing
-        // this also does the nonmax supression on the eigv image
-        //hamburger = depthImage.GoodFeaturesToTrack(15, 
-        
-        
+        // detect features of depth image using the fast detector
+        // I don't really feel like implementing a Harris detector
 
+        FastDetector fast = new FastDetector(10, true);
+
+        var keyPoints = fast.DetectKeyPoints(depthImage, null); // no mask because I don't know what that is
+
+        List<CloudPoint> cloudFeatures = new List<CloudPoint>();
+
+        foreach (var p in keyPoints)
+        {
+            cloudFeatures.Add(findCloudPoint((int)p.Point.X, (int)p.Point.Y));
+        }
+
+        FeatureTree = KdTree<CloudPoint>.Construct(4, cloudFeatures, x => x.ColorLocation());
+    }
+
+    // this reconstructs the cloudpoint from its location in the depth image, unwinding the constructor
+    private CloudPoint findCloudPoint(int xD, int yD)
+    {
+        // find depth, native indexing
+        int dIndex = yD * depthX + xD;
+        int z = rawDepth[dIndex];
+
+        // note that the location in the CloudPoint corresponds to the location in the image plane
+
+        // find color, scale indexing
+        int factorX = colorX / depthX;
+        int factorY = colorY / depthY;
+
+        int cIndex = xD * factorX + yD * factorY * colorX;
+
+        int y = yD * factorY;
+        int x = xD * factorX;
+
+        Color32 color = rawColor[cIndex];
+
+        return new CloudPoint(new Vector(new double[] { x, y, z }), color, Vector.Zeros(3));
     }
 
     // adapted from ZigDepthViewer. this cleans up the depth image so the corner detector can get it easier.
-    void UpdateHistogram()
+    private void UpdateHistogram()
     {
         int i, numOfPoints = 0;
 
@@ -161,6 +275,21 @@ public class PointCloud
             {
                 colorizedDepth[outputIndex] = depthToColor[rawDepth[depthIndex]];
             }
+        }
+    }
+
+    // adds the whole cloud to a tree, then calculate normals on the querypoints
+    private void CalculateNormals(IEnumerable<CloudPoint> cloudPoints)
+    {
+        // somewhat slow, but faster than a brute-force search
+        KdTree<CloudPoint> tree = KdTree<CloudPoint>.Construct(3, PointList, x => x.location);
+
+        foreach (CloudPoint cp in cloudPoints)
+        {
+            // find nearest 4 neighbors and do the thing here: http://pointclouds.org/documentation/tutorials/normal_estimation.php
+            C5.IPriorityQueue<CloudPoint> neighbors = tree.FindNearestNNeighbors(cp.location, 4);
+
+            cp.CalculateNormal(neighbors);
         }
     }
 }

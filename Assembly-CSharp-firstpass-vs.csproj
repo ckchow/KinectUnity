@@ -54,6 +54,9 @@
  <Reference Include="Emgu.CV">
  <HintPath>Assets\Emgu.CV.dll</HintPath>
  </Reference>
+ <Reference Include="Emgu.Util">
+ <HintPath>Assets\Emgu.Util.dll</HintPath>
+ </Reference>
  <Reference Include="MathNet.Iridium">
  <HintPath>Assets\MathNet.Iridium.dll</HintPath>
  </Reference>
@@ -62,9 +65,6 @@
  </Reference>
  <Reference Include="ZDK">
  <HintPath>Assets\ZigFu\Scripts\_Internal\ZDK.dll</HintPath>
- </Reference>
- <Reference Include="Emgu.Util">
- <HintPath>Assets\Emgu.Util.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

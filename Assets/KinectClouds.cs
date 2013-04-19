@@ -112,7 +112,17 @@ public class KinectClouds : MonoBehaviour
         {
             // match this new cloud onto the current cloud
             curCloud.DetectFeatures(); // debug
-            clouds.Add(curCloud);
+			clouds.Add(curCloud);
+
+            if (clouds.Count > 1) // if this isn't the prime cloud, try to push onto the previous one
+            {
+                curCloud.PushOntoCloud(clouds[clouds.Count - 1], 5, 10);
+            }
+
+                 
+
+            
+
 			Debug.Log("got a cloud");
             
         }

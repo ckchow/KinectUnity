@@ -1,10 +1,13 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\PointCloud.cs">
+    <Files>
+      <File FileName="Assets\PointCloud.cs" Line="272" Column="10" />
+    </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="Assembly-CSharp" expanded="True">
+          <Node name="Assembly-CSharp" expanded="True" selected="True">
             <Node name="Assets" expanded="True">
               <Node name="ZigFu" expanded="True">
                 <Node name="Scripts" expanded="True">
@@ -15,9 +18,7 @@
           </Node>
           <Node name="Assembly-CSharp-Editor" expanded="True">
             <Node name="Assets" expanded="True">
-              <Node name="Editor" expanded="True">
-                <Node name="BuildScenes.cs" selected="True" />
-              </Node>
+              <Node name="Editor" expanded="True" />
             </Node>
           </Node>
         </State>
@@ -35,9 +36,7 @@
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="C:\Users\chris\Dropbox\repos\KinectUnity\Assets\PointCloud.cs" line="99" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

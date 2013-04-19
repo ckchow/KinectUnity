@@ -18,12 +18,21 @@ public static class Extensions
     }
 
    
+    // this extension was a little unclear
+    ////public static Vector ColorLocation(this Vector v1, Color32 c)
+    //{
+    //    // maybe compare these colors grayscale otherwise the norm gets really high dim
+    //    double [] g = new double[]{((Color) c).grayscale};
+    //    double[] d = v1.CopyToArray();
 
-    public static Vector ColorLocation(this Vector v1, Color32 c)
+    //    return new Vector(d.Concat(g).ToArray());
+    //}
+
+    // it's possible that this extension is inefficient and we should just store the augmented vector somewhere
+    public static Vector ColorLocation(this CloudPoint c)
     {
-        // maybe compare these colors grayscale otherwise the norm gets really high dim
-        double [] g = new double[]{((Color) c).grayscale};
-        double[] d = v1.CopyToArray();
+        double[] g = new double[] { ((Color)c.color).grayscale };
+        double[] d = c.location.CopyToArray();
 
         return new Vector(d.Concat(g).ToArray());
     }

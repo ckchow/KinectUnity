@@ -52,6 +52,9 @@
  <Reference Include="Emgu.CV">
  <HintPath>Assets\Emgu.CV.dll</HintPath>
  </Reference>
+ <Reference Include="Emgu.Util">
+ <HintPath>Assets\Emgu.Util.dll</HintPath>
+ </Reference>
  <Reference Include="MathNet.Iridium">
  <HintPath>Assets\MathNet.Iridium.dll</HintPath>
  </Reference>
@@ -63,9 +66,6 @@
  </Reference>
  <Reference Include="UnityEditor.Graphs">
  <HintPath>C:\Program Files (x86)\Unity\Editor\Data\Managed\UnityEditor.Graphs.dll</HintPath>
- </Reference>
- <Reference Include="Emgu.Util">
- <HintPath>Assets\Emgu.Util.dll</HintPath>
  </Reference>
   </ItemGroup>
   <ItemGroup>
