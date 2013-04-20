@@ -33,7 +33,7 @@ public class PointCloudRenderer : MonoBehaviour
         cloudP[2] = new CloudPoint(new Vector(new double[] { -534.2246, 565.6496, -2244 }), Color.red, new Vector(new double[] { 0, 0, 0 }));
         cloudP[3] = new CloudPoint(new Vector(new double[] { -518.5121, 565.6496, -2244 }), Color.red, new Vector(new double[] { 0, 0, 0 }));
 
-        // Convert the CloudPoint data and fill the p locations matrix and c colors matrix.
+        // Convert the CloudPoint data and fill the p locations matrix and ci colors matrix.
         getCloudPoints(cloudP);
         // Fix all negative points and force them into the unit cube.
         normalizePoints();

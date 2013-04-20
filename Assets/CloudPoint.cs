@@ -54,8 +54,17 @@ public class CloudPoint
                                                                     (val.location - avg).ToRowMatrix());
 
         // that dude says the smallest eigenvalue is the normal
-        var blah = cov.EigenVectors;
-
+		// first column of eigenvectors is the smallest eigenvalued one
+        normal = cov.EigenVectors.GetColumnVector(0);
+		
+		// orient normal toward viewpoint
+		
+		// to do this we have to push the origin into the world frame
+		 //v = ZigInput.ConvertImageToWorldSpace(v);
+		var viewp = ZigInput.ConvertImageToWorldSpace(Vector3.zero);
+		
+		normal = ((normal * (viewp.ToVector() - this.location)) > 0 ? normal : -normal);
+		normal.Normalize();
     }
 }
 

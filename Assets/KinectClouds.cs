@@ -80,7 +80,7 @@ public class KinectClouds : MonoBehaviour
         //    for (int i = 0; i < rawImageMap.Length; i+=4)
         //    {
         //        colors[i] = rawImageMap[i].a;
-        //        colors[i + 1] = rawImageMap[i].r;
+        //        colors[i + 1] = rawImageMap[i].inc_transform;
         //        colors[i + 2] = rawImageMap[i].g;
         //        colors[i + 3] = rawImageMap[i].b;
         //    }
@@ -116,7 +116,7 @@ public class KinectClouds : MonoBehaviour
 
             if (clouds.Count > 1) // if this isn't the prime cloud, try to push onto the previous one
             {
-                curCloud.PushOntoCloud(clouds[clouds.Count - 1], 5, 10);
+                curCloud.PushOntoCloud(clouds[clouds.Count - 1], 5, 100, 0.5);
             }
 
                  

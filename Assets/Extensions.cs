@@ -19,10 +19,10 @@ public static class Extensions
 
    
     // this extension was a little unclear
-    ////public static Vector ColorLocation(this Vector v1, Color32 c)
+    ////public static Vector ColorLocation(this Vector v1, Color32 ci)
     //{
     //    // maybe compare these colors grayscale otherwise the norm gets really high dim
-    //    double [] g = new double[]{((Color) c).grayscale};
+    //    double [] g = new double[]{((Color) ci).grayscale};
     //    double[] d = v1.CopyToArray();
 
     //    return new Vector(d.Concat(g).ToArray());
