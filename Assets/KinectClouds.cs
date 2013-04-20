@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using MathNet.Numerics.LinearAlgebra;
+using System.Linq;
 using KdTree;
 using System.IO;
 
@@ -40,8 +41,10 @@ public class KinectClouds : MonoBehaviour
 
 	void Update()
 	{
-        // acquire cloud and display it
+        // acquire cloud
         curCloud = new PointCloud(rawDepthMap, dWidth, dHeight, rawImageMap, imWidth, imHeight);
+
+        // display it maybe
         PointCloudRenderer sebRenderer = (PointCloudRenderer)
                                                 Object.FindObjectOfType(typeof(PointCloudRenderer));
 
@@ -119,10 +122,6 @@ public class KinectClouds : MonoBehaviour
                 curCloud.PushOntoCloud(clouds[clouds.Count - 1], 5, 100, 0.5);
             }
 
-                 
-
-            
-
 			Debug.Log("got a cloud");
             
         }
@@ -138,10 +137,22 @@ public class KinectClouds : MonoBehaviour
             if (int.TryParse(cloudIndexString, out cloudIndex) && !showLiveCloud)
             {
                 PointCloudRenderer sebRenderer = (PointCloudRenderer)
-                                                Object.FindObjectOfType(typeof(PointCloudRenderer));
-
-                sebRenderer.getCloudPoints(clouds[cloudIndex].PointList.ToArray());
+                                                    Object.FindObjectOfType(typeof(PointCloudRenderer));
+                if (cloudIndex > 0 && cloudIndex < clouds.Count)
+                {
+                    sebRenderer.getCloudPoints(clouds[cloudIndex].PointList.ToArray());
+                }
+                else if (cloudIndex == -1)
+                {
+                    // show all the fuckin clouds you piece of shit sHOW M<E THE CLODS
+                    sebRenderer.getCloudPoints(clouds.SelectMany(x => x.PointList).ToArray());
+                }
             }
+        }
+
+        if (GUI.Button(new Rect(10, 100, 80, 20), "clear clouds"))
+        {
+            clouds.Clear();
         }
 
         //if (GUI.Button(new Rect(10, 70, 80, 20), "RENDER"))
