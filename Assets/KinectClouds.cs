@@ -20,6 +20,7 @@ public class KinectClouds : MonoBehaviour
     string cloudIndexString;
     PointCloud curCloud;
     bool showLiveCloud = true;
+    bool dumpList = false;
 
     int index;
     string filePath = @"C:\temp\ZIG\";
@@ -117,12 +118,24 @@ public class KinectClouds : MonoBehaviour
             curCloud.DetectFeatures(); // debug
 			clouds.Add(curCloud);
 
+            double error = 0;
+
             if (clouds.Count > 1) // if this isn't the prime cloud, try to push onto the previous one
             {
-                curCloud.PushOntoCloud(clouds[clouds.Count - 1], 5, 100, 0.5);
+				// debugging the normal calculation
+				if (dumpList)
+                {
+                    string worldString = string.Join(";", clouds[cloudIndex].PointList.Select(x => x.location.ToString()).ToArray());
+                    string worldPath =
+                        System.IO.Path.Combine(filePath, "zigW" + index.ToString() + ".csv");
+                    File.WriteAllText(worldPath, worldString);
+                }
+				
+				
+                error = curCloud.PushOntoCloud(clouds[clouds.Count - 1], 40, 300, 0.5);
             }
 
-			Debug.Log("got a cloud");
+            Debug.Log("got cloud " + cloudIndex.ToString() + " e:" + error.ToString() + " R:" + curCloud.R.ToString() + " T:" + curCloud.T.ToString());
             
         }
 
@@ -130,7 +143,8 @@ public class KinectClouds : MonoBehaviour
         cloudIndexString = GUI.TextField(new Rect(10, 30, 20, 20), cloudIndexString, 10);
 
         // have the renderer stop doing whatever
-        showLiveCloud = GUI.Toggle(new Rect(10,50,200,20), showLiveCloud, "live?");
+        showLiveCloud = GUI.Toggle(new Rect(10,50,50,20), showLiveCloud, "live?");
+        dumpList = GUI.Toggle(new Rect(60, 50, 60, 20), dumpList, "DUMP");
 
         if (GUI.Button(new Rect(10, 70, 100, 20), "show this cloud"))
         {
@@ -138,9 +152,10 @@ public class KinectClouds : MonoBehaviour
             {
                 PointCloudRenderer sebRenderer = (PointCloudRenderer)
                                                     Object.FindObjectOfType(typeof(PointCloudRenderer));
-                if (cloudIndex > 0 && cloudIndex < clouds.Count)
+                if (cloudIndex >= 0 && cloudIndex < clouds.Count)
                 {
                     sebRenderer.getCloudPoints(clouds[cloudIndex].PointList.ToArray());
+
                 }
                 else if (cloudIndex == -1)
                 {

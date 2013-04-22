@@ -1,12 +1,20 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\PointCloud.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\CloudPoint.cs">
     <Files>
-      <File FileName="Assets\PointCloud.cs" Line="254" Column="22" />
+      <File FileName="Assets\PointCloud.cs" Line="375" Column="1" />
+      <File FileName="Assets\KinectClouds.cs" Line="133" Column="1" />
+      <File FileName="Assets\CloudPoint.cs" Line="68" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
-        <State selected="True" />
+        <State expanded="True">
+          <Node name="Assembly-CSharp" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="CloudPoint.cs" selected="True" />
+            </Node>
+          </Node>
+        </State>
       </Pad>
       <Pad Id="ClassPad">
         <State selected="True" />
@@ -16,12 +24,28 @@
           <Value>depthToColor</Value>
           <Value>depthHistogramMap</Value>
           <Value>colorizedDepth</Value>
+          <Value>T</Value>
+          <Value>error</Value>
         </State>
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="C:\Users\chris\Dropbox\repos\KinectUnity\Assets\KinectClouds.cs" line="124" />
+      <Breakpoint file="C:\Users\chris\Dropbox\repos\KinectUnity\Assets\PointCloud.cs" line="125" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches>
+    <Watch file="Assets\PointCloud.cs" line="168" offsetX="821" offsetY="2266" expression="T" liveUpdate="False" />
+    <Watch file="Assets\CloudPoint.cs" line="67" offsetX="674" offsetY="737" expression="location" liveUpdate="False" />
+    <Watch file="Assets\CloudPoint.cs" line="52" offsetX="782" offsetY="626" expression="neighbors.heap[0].first" liveUpdate="False" />
+    <Watch file="Assets\CloudPoint.cs" line="52" offsetX="779" offsetY="808" expression="neighbors.heap[0].last" liveUpdate="False" />
+    <Watch file="Assets\CloudPoint.cs" line="52" offsetX="777" offsetY="938" expression="neighbors.heap[1].first" liveUpdate="False" />
+    <Watch file="Assets\CloudPoint.cs" line="52" offsetX="762" offsetY="870" expression="neighbors.heap[1].last" liveUpdate="False" />
+    <Watch file="Assets\CloudPoint.cs" line="52" offsetX="782" offsetY="653" expression="neighbors.heap[0].first.location" liveUpdate="False" />
+    <Watch file="Assets\CloudPoint.cs" line="52" offsetX="779" offsetY="835" expression="neighbors.heap[0].last.location" liveUpdate="False" />
+    <Watch file="Assets\CloudPoint.cs" line="52" offsetX="762" offsetY="897" expression="neighbors.heap[1].last.location" liveUpdate="False" />
+    <Watch file="Assets\CloudPoint.cs" line="52" offsetX="777" offsetY="965" expression="neighbors.heap[1].first.location" liveUpdate="False" />
+  </MonoDevelop.Ide.DebuggingService.PinnedWatches>
 </Properties>

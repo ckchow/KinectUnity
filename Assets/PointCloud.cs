@@ -21,11 +21,15 @@ public class PointCloud
     public int colorX { get; private set; }
     public int colorY { get; private set; }
     
+    /// <summary>
+    /// List of points in this cloud in the world space. 
+    /// </summary>
     public List<CloudPoint> PointList { get; private set; }
 
+    /// <summary>
+    /// Tree of strong features in the depth image as CloudPoints.
+    /// </summary>
     public KdTree<CloudPoint> FeatureTree { get; private set; }
-
-    public Matrix<int> FeatureIndices;
 
     public float[] depthHistogramMap;
     public const int MaxDepth = 10000; // this is something that the sensor knows too, don't mess!
@@ -85,17 +89,6 @@ public class PointCloud
                                             {0, 0, 1}}); // identity rotation
 
         this.T = Vector.Zeros(3); // zero translation
-
-       
-
-       
-
-        //Transform = new Matrix(new double[,]{{1, 0, 0, 0},
-        //                                     {0, 1, 0, 0},
-        //                                     {0, 0, 1, 0},
-        //                                     {0, 0, 0, 1}}); // homogeneous identity
-
-
     }
 
     public double PushOntoCloud(PointCloud other, int iterations, int matchLength, double threshold)
@@ -104,42 +97,50 @@ public class PointCloud
 
         double error = 0;
 
-        #region Correspondence
-        // make the list of matches
-        // NOTE this cannot be a SortedList because that will complain if you give multiple pairs with the same dist
-        List<PointMatch> matches = new List<PointMatch>();
-
-        // go over our list of features
-        foreach (CloudPoint p in this.FeatureTree)
-        {
-            // find nearest in their list of features after our transform 
-            var pT = p.ApplyTransform(R, T);
-
-            CloudPoint o = other.FeatureTree.FindNearestNeighbor(pT.ColorLocation());
-
-            PointMatch match = new PointMatch(pT, o);
-
-            matches.Add(match);
-        }
-
-        // select the top ni matches based on how close they are
-        var topMatches = matches.OrderBy(x => x.Distance).Take(matchLength);
-        #endregion
-
-        #region find normals for matchpoints
-
-        var ourQueryPoints = topMatches.Select(x => x.A.UnApplyTransform(R, T));
-        this.CalculateNormals(ourQueryPoints);
-
-        var theirQueryPoints = topMatches.Select(x => x.B);
-        other.CalculateNormals(theirQueryPoints);
-
-        #endregion
+        
 
         // iterative part
         for (int i = 0; i < iterations; i++)
         {
-            
+
+            //TODO might need to recalculate correspondence now
+
+            #region Correspondence
+            // make the list of matches
+            // NOTE this cannot be a SortedList because that will complain if you give multiple pairs with the same dist
+            List<PointMatch> matches = new List<PointMatch>();
+
+            // go over our list of features
+            foreach (CloudPoint p in this.FeatureTree)
+            {
+                // find nearest in their list of features after our transform 
+                var pT = p.ApplyTransform(R, T);
+
+                CloudPoint o = other.FeatureTree.FindNearestNeighbor(pT.ColorLocation());
+
+                PointMatch match = new PointMatch(p, o);
+
+                matches.Add(match);
+            }
+
+            // select the top N matches based on how close they are
+            var topMatches = matches.OrderBy(x => x.Distance).Take(matchLength);
+            #endregion
+
+            #region find normals for matchpoints
+
+            // do not recalculate norms for guys that already have norms, should give some speedup maybe
+            var ourQueryPoints = topMatches.Where(x => Vector.AlmostEqual(x.A.normal, Vector.Zeros(3))).Select(x => x.A.UnApplyTransform(R, T));
+            this.CalculateNormals(ourQueryPoints);
+
+            var theirQueryPoints = topMatches.Where(x => Vector.AlmostEqual(x.B.normal, Vector.Zeros(3))).Select(x => x.B);
+            other.CalculateNormals(theirQueryPoints);
+
+            #endregion
+
+
+            error = 0; // accumulates over each point match
+
             #region refine ICP estimate
             Matrix cov = new Matrix(6, 6);
             Vector b = new Vector(6);
@@ -148,7 +149,7 @@ public class PointCloud
             foreach (PointMatch pm in topMatches)
             {
                 // moving A onto B
-                var A = pm.A;
+                var A = pm.A.ApplyTransform(R, T);
                 var B = pm.B;
 
                 Vector ni = B.normal;
@@ -158,8 +159,8 @@ public class PointCloud
 
                 cov = cov + (CN.ToColumnMatrix() * CN.ToRowMatrix());
 
-                var diffDot = (A.location - B.location) * ni; // this is a dot product
-
+                var diffDot = (A.location - B.location) * ni; 
+				
                 b = b - (diffDot * Vector.Ones(6)).ArrayMultiply(CN);
 
                 // also accumulate error for this RT since we're here already
@@ -169,7 +170,11 @@ public class PointCloud
             // done accumulating cov and B
 
             // we're done here if our thing put us close enough
-            if (error < threshold) break;
+            if (error < threshold)
+            {
+                // don't do our transform, just keep it in mind
+                return error;
+            }
 
             // solve cov * inc_transform = b
             // compute decomp
@@ -180,20 +185,25 @@ public class PointCloud
 
             Vector inc_transform = LLTSolve(L, b);
 
-            R = Matrix.Create(new double[,]{{1,     -inc_transform[2], inc_transform[1]},
+            var Rnow = Matrix.Create(new double[,]{{1,     -inc_transform[2], inc_transform[1]},
                                             {inc_transform[2],  1,     -inc_transform[0]},
                                             {-inc_transform[1], inc_transform[0],  1}});
 
             // last three components are translation
-            T = Vector.Create(inc_transform.Skip(3).ToArray());
+            var Tnow = Vector.Create(inc_transform.Skip(3).ToArray());
+
+
+            // accumulate incremental transform
+            R = Rnow * R;
+            T = (Rnow * T.ToColumnMatrix() + Tnow.ToColumnMatrix()).GetColumnVector(0);
 
             #endregion 
 
         }
+        
+        // TODO error is from one iteration back, have to recalculate it somehow
 
-        // apply transform to whole cloud
-        ApplyTransform();
-
+        // just keep that transform in mind
         return error;
     }
 
@@ -222,9 +232,14 @@ public class PointCloud
         return x;
     }
 
-    private void ApplyTransform()
+    public List<CloudPoint> TransformList()
     {
-        PointList = new List<CloudPoint>(PointList.Select(x => x.ApplyTransform(R, T)));
+        return new List<CloudPoint>(PointList.Select(x => x.ApplyTransform(R, T)));
+    }
+
+    public KdTree<CloudPoint> TransformTree()
+    {
+        return KdTree<CloudPoint>.Construct(4, FeatureTree.Select(x => x.ApplyTransform(R, T)), x => x.ColorLocation());
     }
 
     public void DetectFeatures()
