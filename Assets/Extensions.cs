@@ -29,11 +29,11 @@ public static class Extensions
     //}
 
     // it's possible that this extension is inefficient and we should just store the augmented vector somewhere
-    public static Vector ColorLocation(this CloudPoint c)
-    {
-        double[] g = new double[] { ((Color)c.color).grayscale };
-        double[] d = c.location.CopyToArray();
+    //public static Vector ColorLocation(this CloudPoint c)
+    //{
+    //    double[] g = new double[] { ((Color)c.color).grayscale };
+    //    double[] d = c.location.CopyToArray();
 
-        return new Vector(d.Concat(g).ToArray());
-    }
+    //    return new Vector(d.Concat(g).ToArray());
+    //}
 }
