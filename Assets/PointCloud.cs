@@ -133,6 +133,7 @@ public class PointCloud
             var ourQueryPoints = topMatches.Where(x => Vector.AlmostEqual(x.A.normal, Vector.Zeros(3))).Select(x => x.A.UnApplyTransform(R, T));
             this.CalculateNormals(ourQueryPoints);
 
+            // TODO this might not need to be calculated every iteration, I think we only need normals from one set to do it
             var theirQueryPoints = topMatches.Where(x => Vector.AlmostEqual(x.B.normal, Vector.Zeros(3))).Select(x => x.B);
             other.CalculateNormals(theirQueryPoints);
 

@@ -47,12 +47,17 @@
      <Compile Include="Assets\Arithmetic.cs" />
      <Compile Include="Assets\CloudPoint.cs" />
      <Compile Include="Assets\Extensions.cs" />
+     <Compile Include="Assets\Hull.cs" />
      <Compile Include="Assets\KdTree.cs" />
      <Compile Include="Assets\KdTreeNode.cs" />
      <Compile Include="Assets\KinectClouds.cs" />
      <Compile Include="Assets\PointCloud.cs" />
      <Compile Include="Assets\PointCloudRenderer.cs" />
+     <Compile Include="Assets\Set.cs" />
      <Compile Include="Assets\SuperCloud.cs" />
+     <Compile Include="Assets\Triad.cs" />
+     <Compile Include="Assets\Triangulator.cs" />
+     <Compile Include="Assets\Vertex.cs" />
      <Compile Include="Assets\ZigFu\SampleScenes\_Data\Scripts\ExitOnEscape.cs" />
      <Compile Include="Assets\ZigFu\SampleScenes\_Data\Scripts\HSBColor.cs" />
      <Compile Include="Assets\ZigFu\SampleScenes\_Data\Scripts\MenuController.cs" />

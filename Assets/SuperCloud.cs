@@ -8,7 +8,7 @@ class SuperCloud
 {
     public List<CloudPoint> Points { get; private set; }
 
-    List<RT> Transforms { get; private set; }
+    public List<RT> Transforms { get; private set; }
 
     public SuperCloud(PointCloud root)
     {

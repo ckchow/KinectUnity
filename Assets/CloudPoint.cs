@@ -66,7 +66,17 @@ public class CloudPoint
 		normal = ((normal * (viewp.ToVector() - this.location)) > 0 ? normal : -normal);
 		normal.Normalize();
     }
+
+    public Vector ColorLocation()
+    {
+        double[] g = new double[] { ((Color)color).grayscale };
+        double[] d = location.CopyToArray();
+
+        return new Vector(d.Concat(g).ToArray());
+    }
 }
+
+
 
 public class PointMatch : IComparable
 {
