@@ -15,6 +15,7 @@ public class KinectClouds : MonoBehaviour
     int dWidth;
     int dHeight;
 
+    SuperCloud sCloud;
     List<PointCloud> clouds;
     int cloudIndex = 0;
     string cloudIndexString;
@@ -38,6 +39,7 @@ public class KinectClouds : MonoBehaviour
         clouds = new List<PointCloud>();
 
         cloudIndexString = "";
+        sCloud = new SuperCloud();
     }
 
 	void Update()
@@ -114,10 +116,11 @@ public class KinectClouds : MonoBehaviour
 
         if (GUI.Button(new Rect(10,10,100,20), "add cloud"))
         {
-            // match this new cloud onto the current cloud
-            curCloud.DetectFeatures(); // debug
+            
+			
+            curCloud.DetectFeatures(); // debug, TODO move this into normal init
+            //var blah = clouds.ToArray();
 			clouds.Add(curCloud);
-
             double error = 0;
 
             if (clouds.Count > 1) // if this isn't the prime cloud, try to push onto the previous one
@@ -125,17 +128,20 @@ public class KinectClouds : MonoBehaviour
 				// debugging the normal calculation
 				if (dumpList)
                 {
-                    string worldString = string.Join(";", clouds[cloudIndex].PointList.Select(x => x.location.ToString()).ToArray());
+                    string worldString = string.Join(";", curCloud.PointList.Select(x => x.location.ToString()).ToArray());
                     string worldPath =
                         System.IO.Path.Combine(filePath, "zigW" + index.ToString() + ".csv");
                     File.WriteAllText(worldPath, worldString);
                 }
 				
 				
-                error = curCloud.PushOntoCloud(clouds[clouds.Count - 1], 40, 300, 0.5);
+                error = curCloud.PushOntoCloud(clouds[clouds.Count-2], 22, 300, 5, 50);
             }
 
-            Debug.Log("got cloud " + cloudIndex.ToString() + " e:" + error.ToString() + " R:" + curCloud.R.ToString() + " T:" + curCloud.T.ToString());
+            sCloud.AddCloud(curCloud);
+
+
+            Debug.Log("got cloud " + (clouds.Count-1).ToString() + " e:" + error.ToString() + " R:" + curCloud.R.ToString() + " T:" + curCloud.T.ToString());
             
         }
 
@@ -160,7 +166,8 @@ public class KinectClouds : MonoBehaviour
                 else if (cloudIndex == -1)
                 {
                     // show all the fuckin clouds you piece of shit sHOW M<E THE CLODS
-                    sebRenderer.getCloudPoints(clouds.SelectMany(x => x.PointList).ToArray());
+                    //sebRenderer.getCloudPoints(sCloud.Points.ToArray());
+                    sebRenderer.getCloudPoints(sCloud.GetPriorityClouds().ToArray());
                 }
             }
         }
@@ -168,6 +175,7 @@ public class KinectClouds : MonoBehaviour
         if (GUI.Button(new Rect(10, 100, 80, 20), "clear clouds"))
         {
             clouds.Clear();
+			sCloud.Clear();
         }
 
         //if (GUI.Button(new Rect(10, 70, 80, 20), "RENDER"))

@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MathNet.Numerics.LinearAlgebra;
+using UnityEngine;
 
 class SuperCloud
 {
@@ -10,9 +11,28 @@ class SuperCloud
 
     public List<RT> Transforms { get; private set; }
 
+    /// <summary>
+    /// Number of points acquired each time you add a cloud. used for coloring purposes
+    /// </summary>
+    public List<int> PointsPerCloud;
+
+    private Color32 colorStart = Color.magenta;
+    private Color32 colorEnd = Color.blue;
+
     public SuperCloud(PointCloud root)
     {
         this.Points = root.PointList;
+        Transforms = new List<RT>();
+        Transforms.Add(new RT(root.R, root.T));
+        PointsPerCloud = new List<int>();
+        PointsPerCloud.Add(root.PointList.Count);
+    }
+
+    public SuperCloud()
+    {
+        Points = new List<CloudPoint>();
+        Transforms = new List<RT>();
+        PointsPerCloud = new List<int>();
     }
 
     public void AddCloud(PointCloud cloud)
@@ -25,17 +45,43 @@ class SuperCloud
         foreach (RT rt in ((IEnumerable<RT>) Transforms).Reverse())
         {
             transformedPoints = transformedPoints.Select(x => x.ApplyTransform(rt.R, rt.T)).ToList();
-            // SO FRESH
         }
 
+		Points = Points.Concat(transformedPoints).ToList();
+		
+		var blah = Transforms.ToArray();
 
-        // cull points that are redundant
+        PointsPerCloud.Add(transformedPoints.Count);
+
+        // TODO cull points that are redundant
     }
 
     public void Clear()
     {
         Points.Clear();
         Transforms.Clear();
+        PointsPerCloud.Clear();
+    }
+
+    /// <summary>
+    /// Returns the CloudPoints recolored according to their acquisition order.
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerable<CloudPoint> GetPriorityClouds()
+    {
+        float step = 1f / PointsPerCloud.Count;
+
+        List<CloudPoint> newPoints = new List<CloudPoint>();
+
+        for (int i = 0; i < PointsPerCloud.Count; i++)
+        {
+            var color = Color32.Lerp(colorStart, colorEnd, i * step);
+            var pointsPassed = PointsPerCloud.Take(i).Sum();
+
+            newPoints.AddRange(Points.Skip(pointsPassed).Select(x => new CloudPoint(x.location, color, x.normal)));
+        }
+
+        return newPoints;
     }
 }
 

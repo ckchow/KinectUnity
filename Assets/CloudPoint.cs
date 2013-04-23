@@ -60,7 +60,7 @@ public class CloudPoint
 		// orient normal toward viewpoint
 		
 		// to do this we have to push the origin into the world frame
-		 //v = ZigInput.ConvertImageToWorldSpace(v);
+		//v = ZigInput.ConvertImageToWorldSpace(v);
 		var viewp = ZigInput.ConvertImageToWorldSpace(Vector3.zero);
 		
 		normal = ((normal * (viewp.ToVector() - this.location)) > 0 ? normal : -normal);

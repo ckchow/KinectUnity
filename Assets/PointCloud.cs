@@ -91,7 +91,7 @@ public class PointCloud
         this.T = Vector.Zeros(3); // zero translation
     }
 
-    public double PushOntoCloud(PointCloud other, int iterations, int matchLength, double threshold)
+    public double PushOntoCloud(PointCloud other, int iterations, int matchLength, double threshold, double dmax)
     {
         // we are going to update our transform to place us on the other cloud with the ICP
 
@@ -109,7 +109,10 @@ public class PointCloud
             // make the list of matches
             // NOTE this cannot be a SortedList because that will complain if you give multiple pairs with the same dist
             List<PointMatch> matches = new List<PointMatch>();
-
+			
+			// TODO: estimate a dmax since we are using large datasets, we don't want outliers to push the alignment off
+			
+			
             // go over our list of features
             foreach (CloudPoint p in this.FeatureTree)
             {
@@ -117,8 +120,12 @@ public class PointCloud
                 var pT = p.ApplyTransform(R, T);
 
                 CloudPoint o = other.FeatureTree.FindNearestNeighbor(pT.ColorLocation());
+                // TODO Rusu suggests finding more neighbors and doing some weird thing
+                // TODO what if multiple points match onto the same neighbor?
 
                 PointMatch match = new PointMatch(p, o);
+				
+				if (match.Distance > dmax) continue;
 
                 matches.Add(match);
             }
@@ -129,11 +136,10 @@ public class PointCloud
 
             #region find normals for matchpoints
 
-            // do not recalculate norms for guys that already have norms, should give some speedup maybe
-            var ourQueryPoints = topMatches.Where(x => Vector.AlmostEqual(x.A.normal, Vector.Zeros(3))).Select(x => x.A.UnApplyTransform(R, T));
-            this.CalculateNormals(ourQueryPoints);
+//            // do not recalculate norms for guys that already have norms, should give some speedup maybe
+//            var ourQueryPoints = topMatches.Where(x => Vector.AlmostEqual(x.A.normal, Vector.Zeros(3))).Select(x => x.A.UnApplyTransform(R, T));
+//            this.CalculateNormals(ourQueryPoints);
 
-            // TODO this might not need to be calculated every iteration, I think we only need normals from one set to do it
             var theirQueryPoints = topMatches.Where(x => Vector.AlmostEqual(x.B.normal, Vector.Zeros(3))).Select(x => x.B);
             other.CalculateNormals(theirQueryPoints);
 
@@ -158,7 +164,12 @@ public class PointCloud
 
                 Vector CN = Vector.Create(ci.Concat(ni).ToArray());
 
-                cov = cov + (CN.ToColumnMatrix() * CN.ToRowMatrix());
+
+                var newCov = CN.ToColumnMatrix() * CN.ToRowMatrix();
+
+                if (newCov.GetArray().Any(x => x.Any(y => double.IsNaN(y)))) continue; // NaN will poison the covariance!!
+
+                cov = cov + newCov;                
 
                 var diffDot = (A.location - B.location) * ni; 
 				
@@ -194,9 +205,12 @@ public class PointCloud
             var Tnow = Vector.Create(inc_transform.Skip(3).ToArray());
 
 
-            // accumulate incremental transform
+            // incrementals??
             R = Rnow * R;
             T = (Rnow * T.ToColumnMatrix() + Tnow.ToColumnMatrix()).GetColumnVector(0);
+			
+			//R = Rnow;
+			//T = Tnow;
 
             #endregion 
 
