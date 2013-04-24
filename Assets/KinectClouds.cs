@@ -123,16 +123,25 @@ public class KinectClouds : MonoBehaviour
 			clouds.Add(curCloud);
             double error = 0;
 
+            if (dumpList)
+            {
+                string worldString = string.Join(";", curCloud.PointList.Select(x => x.location.ToString()).ToArray());
+                string worldPath =
+                    System.IO.Path.Combine(filePath, "zigW" + index.ToString() + ".txt");
+                File.WriteAllText(worldPath, worldString);
+
+                string colorString = string.Join(";", curCloud.PointList.Select(x => x.color.ToString()).ToArray());
+                string colorPath =
+                    System.IO.Path.Combine(filePath, "zigC" + index.ToString() + ".txt");
+                File.WriteAllText(colorPath, colorString);
+
+                index++;
+            }
+				
+
             if (clouds.Count > 1) // if this isn't the prime cloud, try to push onto the previous one
             {
-				// debugging the normal calculation
-				if (dumpList)
-                {
-                    string worldString = string.Join(";", curCloud.PointList.Select(x => x.location.ToString()).ToArray());
-                    string worldPath =
-                        System.IO.Path.Combine(filePath, "zigW" + index.ToString() + ".csv");
-                    File.WriteAllText(worldPath, worldString);
-                }
+				// dump the data for analysis
 				
 				
                 error = curCloud.PushOntoCloud(clouds[clouds.Count-2], 22, 300, 5, 50);

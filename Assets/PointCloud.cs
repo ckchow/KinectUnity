@@ -36,9 +36,15 @@ public class PointCloud
     Color32[] depthToColor;
     public Color32 BaseColor = Color.yellow;
 
-    public Matrix R { get; private set; }
-    public Vector T { get; private set; }
-    
+    public Matrix R { get; set; }
+    public Vector T { get; set; }
+
+    // this is mostly for testing crap
+    public PointCloud()
+    {
+        
+    }
+
     public PointCloud(short[] depth, int dWidth, int dHeight,
                       Color32[] color, int cWidth, int cHeight)
     {
@@ -85,8 +91,8 @@ public class PointCloud
 		UpdateHistogram();
 
         this.R = Matrix.Create(new double[,]{{1, 0, 0},
-                                            {0, 1, 0},
-                                            {0, 0, 1}}); // identity rotation
+                                             {0, 1, 0},
+                                             {0, 0, 1}}); // identity rotation
 
         this.T = Vector.Zeros(3); // zero translation
     }
@@ -247,12 +253,12 @@ public class PointCloud
         return x;
     }
 
-    public List<CloudPoint> TransformList()
+    public List<CloudPoint> TransformedList()
     {
         return new List<CloudPoint>(PointList.Select(x => x.ApplyTransform(R, T)));
     }
 
-    public KdTree<CloudPoint> TransformTree()
+    public KdTree<CloudPoint> TransformedTree()
     {
         return KdTree<CloudPoint>.Construct(4, FeatureTree.Select(x => x.ApplyTransform(R, T)), x => x.ColorLocation());
     }
@@ -273,7 +279,7 @@ public class PointCloud
 
         depthImage.Bytes = bytes;
 
-        // detect features of depth image using the fast detector
+        // detect features of depth image using the FAST detector
         // I don't really feel like implementing a Harris detector
 
         FastDetector fast = new FastDetector(10, true);

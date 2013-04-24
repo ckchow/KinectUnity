@@ -77,7 +77,6 @@ public class CloudPoint
 }
 
 
-
 public class PointMatch : IComparable
 {
     public CloudPoint A { get; private set; }
