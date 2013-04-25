@@ -159,7 +159,7 @@ namespace KdTree
 
             var dimension = depth % this.dimensionality;
             var nodeLocation = this.locationGetter(node.Value);
-            var distance = (nodeLocation - location).Norm();   // this is a 2=norm, i.e. a Euclidean one
+            var distance = (nodeLocation - location).Norm();   // this is a 2=norm, j.e. a Euclidean one
 
             // Add current node to list if it lies within given range.
             // Current node cannot be same as search location.

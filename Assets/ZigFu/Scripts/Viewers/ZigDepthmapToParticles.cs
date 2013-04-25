@@ -50,7 +50,7 @@ public class ZigDepthmapToParticles : MonoBehaviour
         for (int i = 0; i < (emitterCount * cycles); i++)
         {
             particleEmitters[i] = ((GameObject)Instantiate(particlePrefab, Vector3.zero, Quaternion.identity)).GetComponent<ParticleEmitter>();
-            //particleEmitters[i].particles = new Particle[MAX_PARTICLES_PER_PE];
+            //particleEmitters[j].particles = new Particle[MAX_PARTICLES_PER_PE];
         }
         ZigInput.Instance.AddListener(gameObject);        
     }

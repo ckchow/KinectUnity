@@ -110,7 +110,7 @@ public class PointCloudRenderer : MonoBehaviour
             // Color points according to xyz location.
             rgba[i] = new Color(points[i, 0], points[i, 1], points[i, 2]);
             // Normalize with max coordinate value.
-            //rgba[i] /= max;
+            //rgba[j] /= max;
             // Retain complete opacity.
             rgba[i].a = 255;
         }
@@ -133,7 +133,7 @@ public class PointCloudRenderer : MonoBehaviour
             cloud[i].color = rgba[i];
             // Static size.
             cloud[i].size = particleSize;
-            //print("{ x: " + cloud[i].position.x + " // y: " + cloud[i].position.y + " // z: " + cloud[i].position.z + " }");
+            //print("{ x: " + cloud[j].position.x + " // y: " + cloud[j].position.y + " // z: " + cloud[j].position.z + " }");
         }
 
         // Every time the points are set, redraw them.

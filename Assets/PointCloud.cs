@@ -8,6 +8,7 @@ using MathNet.Numerics.LinearAlgebra;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using Emgu.CV.Features2D;
+using System.Reflection;
 
 
 public class PointCloud
@@ -30,11 +31,14 @@ public class PointCloud
     /// Tree of strong features in the depth image as CloudPoints.
     /// </summary>
     public KdTree<CloudPoint> FeatureTree { get; private set; }
+	public List<CloudPoint> FeatureList {get; private set;}
 
     public float[] depthHistogramMap;
     public const int MaxDepth = 10000; // this is something that the sensor knows too, don't mess!
     Color32[] depthToColor;
     public Color32 BaseColor = Color.yellow;
+
+    public List<RT> IncrementalTransforms { get; private set; }
 
     public Matrix R { get; set; }
     public Vector T { get; set; }
@@ -43,6 +47,18 @@ public class PointCloud
     public PointCloud()
     {
         
+    }
+
+    // copy constructor for matching and stuff
+    public PointCloud(PointCloud cloneFrom)
+    {
+        FieldInfo[] classFields = this.GetType().GetFields(
+            BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+
+        foreach (FieldInfo fi in classFields)
+        {
+            fi.SetValue(this, fi.GetValue(cloneFrom));
+        }
     }
 
     public PointCloud(short[] depth, int dWidth, int dHeight,
@@ -86,7 +102,8 @@ public class PointCloud
         depthHistogramMap = new float[MaxDepth];
         depthToColor = new Color32[MaxDepth];
         colorizedDepth = new Color32[depthX * depthY];
-		
+        IncrementalTransforms = new List<RT>();
+		FeatureList = new List<CloudPoint>();
         
 		UpdateHistogram();
 
@@ -102,9 +119,21 @@ public class PointCloud
         // we are going to update our transform to place us on the other cloud with the ICP
 
         double error = 0;
-
-        
-
+		
+		// I think this deep copy is messing it up somehow
+        //var movingCloud = new PointCloud(this);
+		
+		// we need to make a list and kdtree that move every iteration.
+		
+		// TODO MEGA TESTING
+		var poop = FeatureList.ToArray();
+		
+        List<CloudPoint> movingFeatures = new List<CloudPoint>(FeatureList);
+		
+		var poop2 = movingFeatures.ToArray();
+		
+        List<CloudPoint> movingList = new List<CloudPoint>(PointList); // this is only for calculating error
+		
         // iterative part
         for (int i = 0; i < iterations; i++)
         {
@@ -116,18 +145,23 @@ public class PointCloud
             // NOTE this cannot be a SortedList because that will complain if you give multiple pairs with the same dist
             List<PointMatch> matches = new List<PointMatch>();
 			
-			// TODO: estimate a dmax since we are using large datasets, we don't want outliers to push the alignment off
+			// TODO testing
 			
+			var blah = movingFeatures.ToArray();
 			
             // go over our list of features
-            foreach (CloudPoint p in this.FeatureTree)
+            foreach (CloudPoint p in movingFeatures)
             {
-                // find nearest in their list of features after our transform 
+				if (p.location.Any(x => double.IsNaN(x)))
+				{
+					//Debug.Log("feature had NaN");
+					continue;
+				}
+				
+                // nearest in their list of features after our transform 
                 var pT = p.ApplyTransform(R, T);
 
                 CloudPoint o = other.FeatureTree.FindNearestNeighbor(pT.ColorLocation());
-                // TODO Rusu suggests finding more neighbors and doing some weird thing
-                // TODO what if multiple points match onto the same neighbor?
 
                 PointMatch match = new PointMatch(p, o);
 				
@@ -135,18 +169,21 @@ public class PointCloud
 
                 matches.Add(match);
             }
-
-            // select the top N matches based on how close they are
-            var topMatches = matches.OrderBy(x => x.Distance).Take(matchLength);
+			
+			// TODO testing
+			var poops = matches.ToArray();
+			
             #endregion
 
             #region find normals for matchpoints
 
-//            // do not recalculate norms for guys that already have norms, should give some speedup maybe
+//            
 //            var ourQueryPoints = topMatches.Where(x => Vector.AlmostEqual(x.A.normal, Vector.Zeros(3))).Select(x => x.A.UnApplyTransform(R, T));
 //            this.CalculateNormals(ourQueryPoints);
 
-            var theirQueryPoints = topMatches.Where(x => Vector.AlmostEqual(x.B.normal, Vector.Zeros(3))).Select(x => x.B);
+            // do not recalculate norms for guys that already have norms, should give some speedup maybe
+            // also the stationary cloud does not need normals
+            var theirQueryPoints = matches.Select(x => x.B).Where(y => Vector.AlmostEqual(y.normal, Vector.Zeros(3)));
             other.CalculateNormals(theirQueryPoints);
 
             #endregion
@@ -159,10 +196,10 @@ public class PointCloud
             Vector b = new Vector(6);
 
             var r = Vector.Create(new double[] { R[2, 1], R[0, 2], R[1, 0] });
-            foreach (PointMatch pm in topMatches)
+            foreach (PointMatch pm in matches)
             {
                 // moving A onto B
-                var A = pm.A.ApplyTransform(R, T);
+                var A = pm.A;
                 var B = pm.B;
 
                 Vector ni = B.normal;
@@ -173,7 +210,11 @@ public class PointCloud
 
                 var newCov = CN.ToColumnMatrix() * CN.ToRowMatrix();
 
-                if (newCov.GetArray().Any(x => x.Any(y => double.IsNaN(y)))) continue; // NaN will poison the covariance!!
+                if (newCov.GetArray().Any(x => x.Any(y => double.IsNaN(y))))
+                {
+                    //Debug.Log("covariance was bad! " + newCov.ToString());
+                    continue; // NaN will poison the covariance!!
+                }
 
                 cov = cov + newCov;                
 
@@ -183,25 +224,31 @@ public class PointCloud
 
                 // also accumulate error for this RT since we're here already
                 
-                error = error + Math.Pow((diffDot + (T * ni) + (r * ci)), 2);
+                //error = error + Math.Pow((diffDot + (T * ni) + (r * ci)), 2);
             }
             // done accumulating cov and B
 
-            // we're done here if our thing put us close enough
-            if (error < threshold)
-            {
-                // don't do our transform, just keep it in mind
-                return error;
-            }
+            // positive and semidefinite != nonsingular
 
-            // solve cov * inc_transform = b
-            // compute decomp
-            var chol = cov.CholeskyDecomposition;
-
-            // solve LL' * inc_transform = b
-            var L = chol.TriangularFactor;
-
-            Vector inc_transform = LLTSolve(L, b);
+            // cov * inc = b
+            // since the cov gets singular so often let's do the pseudoinverse with the SVD
+//            var covSVD = cov.SingularValueDecomposition;
+//
+//            // swap U and V, take pseudoinverse of S
+//            var U = covSVD.LeftSingularVectors;
+//            var V = covSVD.RightSingularVectors;             
+//            var Svec = covSVD.SingularValues;
+//            // this is to make sure the St matrix doesnt get jammed full of NaN
+//            Svec = Vector.Create(Vector.Ones(6).ArrayDivide(Svec).Select(x => double.IsNaN(x) ? 0 : x).ToArray());
+//
+//            var St = Matrix.Diagonal(Svec);
+//
+//            var pseudoInv = V * St * U;
+//
+//            Vector inc_transform = (pseudoInv * b.ToColumnMatrix()).GetColumnVector(0);
+			
+			var chol = cov.CholeskyDecomposition;
+			var inc_transform = chol.Solve(b);
 
             var Rnow = Matrix.Create(new double[,]{{1,     -inc_transform[2], inc_transform[1]},
                                             {inc_transform[2],  1,     -inc_transform[0]},
@@ -210,25 +257,38 @@ public class PointCloud
             // last three components are translation
             var Tnow = Vector.Create(inc_transform.Skip(3).ToArray());
 
+            IncrementalTransforms.Add(new RT(Rnow, Tnow));
 
             // incrementals??
             R = Rnow * R;
             T = (Rnow * T.ToColumnMatrix() + Tnow.ToColumnMatrix()).GetColumnVector(0);
+            //R = Rnow;
+            //T = Tnow;
+
+            movingList = movingList.Select(x => x.ApplyTransform(R, T)).ToList();
+            movingFeatures = movingFeatures.Select(x => x.ApplyTransform(R, T)).ToList();
+
+            // calculate error
+            error = movingList.Zip(movingList, (x, y) => Math.Pow((x.location - y.location).Norm(), 2)).Sum();
+
+            // we're done here if our thing put us close enough
+            if (error < threshold)
+            {
+                return error;
+            }
 			
-			//R = Rnow;
-			//T = Tnow;
 
             #endregion 
 
         }
         
-        // TODO error is from one iteration back, have to recalculate it somehow
-
-        // just keep that transform in mind
+        // just keep that transform in mind, dont actually do it
         return error;
     }
 
     // this is from https://ece.uwaterloo.ca/~ece204/howtos/forward/ hehehh
+    // I think this is stable whereas the actual inverse goes really weird
+    // no, this just quietly puts NaN into the vector when something goes wrong
     private Vector LLTSolve(Matrix L, Vector b)
     {
         int i = 0;
@@ -245,12 +305,18 @@ public class PointCloud
         Vector x = Vector.Zeros(n);
         var Lt = Matrix.Transpose(L);
 
-        for (i = n-1; i >= 0; i--)
+        for (i = n - 1; i >= 0; i--)
         {
             x[i] = (z[i] - (Lt.GetRowVector(i) * x)) / Lt[i, i];
         }
 
         return x;
+    }
+
+    public void ApplyTransform()
+    {
+        this.PointList = TransformedList();
+        this.FeatureTree = TransformedTree();
     }
 
     public List<CloudPoint> TransformedList()
@@ -282,21 +348,33 @@ public class PointCloud
         // detect features of depth image using the FAST detector
         // I don't really feel like implementing a Harris detector
 
-        FastDetector fast = new FastDetector(10, true);
+        FastDetector fast = new FastDetector(4, true);
 
         var keyPoints = fast.DetectKeyPoints(depthImage, null); // no mask because I don't know what that is
 
-        List<CloudPoint> cloudFeatures = new List<CloudPoint>();
+        //List<CloudPoint> cloudFeatures = new List<CloudPoint>();
 
         foreach (var p in keyPoints)
         {
-            cloudFeatures.Add(findCloudPoint((int)p.Point.X, (int)p.Point.Y));
+			var newFeature = findCloudPoint((int)p.Point.X, (int)p.Point.Y);
+			
+			if (newFeature.location.All(x => x == 0))
+			{
+				//Debug.Log("detector wanted a 0 depth point");
+				continue;
+			}
+			
+            FeatureList.Add(newFeature);
+			Debug.Log ("got feature " + newFeature.location.ToString());
         }
-
-        FeatureTree = KdTree<CloudPoint>.Construct(4, cloudFeatures, x => x.ColorLocation());
+		
+		// TODO testing
+		var blah = FeatureList.ToArray();
+		
+        FeatureTree = KdTree<CloudPoint>.Construct(4, FeatureList, x => x.ColorLocation());
     }
 
-    // this reconstructs the cloudpoint from its location in the depth image, unwinding the constructor
+    // this does the same thing as the constructor basically
     private CloudPoint findCloudPoint(int xD, int yD)
     {
         // find depth, native indexing
@@ -313,10 +391,13 @@ public class PointCloud
 
         int y = yD * factorY;
         int x = xD * factorX;
-
+		
+		var worldVec = new Vector3(x, y, z);
+		worldVec = ZigInput.ConvertImageToWorldSpace(worldVec);
+		
         Color32 color = rawColor[cIndex];
 
-        return new CloudPoint(new Vector(new double[] { x, y, z }), color, Vector.Zeros(3));
+        return new CloudPoint(worldVec.ToVector(), color, Vector.Zeros(3));
     }
 
     // adapted from ZigDepthViewer. this cleans up the depth image so the corner detector can get it easier.
@@ -362,7 +443,7 @@ public class PointCloud
             for (i = 1; i < depthHistogramMap.Length; i++)
             {
                 float intensity = (1.0f - (depthHistogramMap[i] / numOfPoints));
-                //depthHistogramMap[i] = intensity * 255;
+                //depthHistogramMap[j] = intensity * 255;
                 depthToColor[i].r = (byte)(BaseColor.r * intensity);
                 depthToColor[i].g = (byte)(BaseColor.g * intensity);
                 depthToColor[i].b = (byte)(BaseColor.b * intensity);

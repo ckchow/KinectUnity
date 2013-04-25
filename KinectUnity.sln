@@ -9,6 +9,8 @@ Project("{7399BCA4-314E-6A54-1D65-A9ED3F64959B}") = "KinectUnity", "Assembly-CSh
 EndProject
 Project("{7399BCA4-314E-6A54-1D65-A9ED3F64959B}") = "KinectUnity", "Assembly-UnityScript-firstpass.unityproj", "{72733E9E-5075-D5CD-2D81-902A5A7EC95C}"
 EndProject
+Project("{7399BCA4-314E-6A54-1D65-A9ED3F64959B}") = "KinectUnity", "Assembly-UnityScript.unityproj", "{BB1E593F-38F8-2EC6-6731-55A9DC1AA425}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,11 +33,15 @@ Global
 		{72733E9E-5075-D5CD-2D81-902A5A7EC95C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72733E9E-5075-D5CD-2D81-902A5A7EC95C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72733E9E-5075-D5CD-2D81-902A5A7EC95C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB1E593F-38F8-2EC6-6731-55A9DC1AA425}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB1E593F-38F8-2EC6-6731-55A9DC1AA425}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB1E593F-38F8-2EC6-6731-55A9DC1AA425}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB1E593F-38F8-2EC6-6731-55A9DC1AA425}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-																										GlobalSection(MonoDevelopProperties) = preSolution
+																																					GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
 		$0.TextStylePolicy = $1
 		$1.inheritsSet = null

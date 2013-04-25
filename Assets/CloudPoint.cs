@@ -30,7 +30,10 @@ public class CloudPoint
         // I can guarantee that this will work correctly so we index blindly
         var newLocation = (R * location.ToColumnMatrix() + T.ToColumnMatrix()).GetColumnVector(0);
 
-        return new CloudPoint(newLocation, this.color, this.normal);
+        // ALSO MOVE THE NORMAL HOLTY MOLTY
+        var newNormal = (R * normal.ToColumnMatrix() + T.ToColumnMatrix()).GetColumnVector(0);
+
+        return new CloudPoint(newLocation, this.color, newNormal);
     }
 
     public CloudPoint UnApplyTransform(Matrix R, Vector T)

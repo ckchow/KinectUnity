@@ -4,12 +4,18 @@ using System.Linq;
 using System.Text;
 using MathNet.Numerics.LinearAlgebra;
 using UnityEngine;
+using DelaunayTriangulator;
 
 class SuperCloud
 {
     public List<CloudPoint> Points { get; private set; }
 
     public List<RT> Transforms { get; private set; }
+
+    private Triangulator triangler;
+
+    public List<Triad> SuperTriads { get; private set; }
+    
 
     /// <summary>
     /// Number of points acquired each time you add a cloud. used for coloring purposes
@@ -33,6 +39,7 @@ class SuperCloud
         Points = new List<CloudPoint>();
         Transforms = new List<RT>();
         PointsPerCloud = new List<int>();
+        triangler = new Triangulator();
     }
 
     public void AddCloud(PointCloud cloud)
@@ -55,6 +62,15 @@ class SuperCloud
 
         // TODO cull points that are redundant
     }
+	
+	//TODO probably don't put this here, but it's ok for the demo
+	public void Triangulate()
+	{
+		// project supercloud onto vertex list, truncating Z
+        var vertices = Points.Select(x => new Vertex((float)x.location[0], (float)x.location[1])).ToList();
+
+        SuperTriads = triangler.Triangulation(vertices);
+	}
 
     public void Clear()
     {

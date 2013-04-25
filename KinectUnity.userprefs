@@ -1,19 +1,14 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\SuperCloud.cs">
-    <Files>
-      <File FileName="Assets\KinectClouds.cs" Line="141" Column="1" />
-      <File FileName="Assets\PointCloud.cs" Line="185" Column="14" />
-      <File FileName="Assets\CloudPoint.cs" Line="108" Column="10" />
-      <File FileName="Assets\PointCloudRenderer.cs" Line="140" Column="29" />
-      <File FileName="Assets\SuperCloud.cs" Line="38" Column="12" />
-    </Files>
+  <MonoDevelop.Ide.Workbench>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Assembly-CSharp" expanded="True">
             <Node name="Assets" expanded="True">
-              <Node name="SuperCloud.cs" selected="True" />
+              <Node name="Test" expanded="True" />
+              <Node name="tests" expanded="True" />
+              <Node name="ICP.cs.testing" selected="True" />
             </Node>
           </Node>
         </State>
@@ -28,21 +23,15 @@
           <Value>colorizedDepth</Value>
           <Value>T</Value>
           <Value>error</Value>
+          <Value>cov</Value>
         </State>
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="C:\Users\chris\Dropbox\repos\KinectUnity\Assets\KinectClouds.cs" line="166" />
-      <Breakpoint file="C:\Users\chris\Dropbox\repos\KinectUnity\Assets\KinectClouds.cs" line="141" />
-      <Breakpoint file="C:\Users\chris\Dropbox\repos\KinectUnity\Assets\SuperCloud.cs" line="26" />
-      <Breakpoint file="C:\Users\chris\Dropbox\repos\KinectUnity\Assets\SuperCloud.cs" line="28" />
-      <Breakpoint file="C:\Users\chris\Dropbox\repos\KinectUnity\Assets\SuperCloud.cs" line="30" />
-      <Breakpoint file="C:\Users\chris\Dropbox\repos\KinectUnity\Assets\SuperCloud.cs" line="33" />
-      <Breakpoint file="C:\Users\chris\Dropbox\repos\KinectUnity\Assets\SuperCloud.cs" line="38" />
-      <Breakpoint file="C:\Users\chris\Dropbox\repos\KinectUnity\Assets\SuperCloud.cs" line="20" />
-      <Breakpoint file="C:\Users\chris\Dropbox\repos\KinectUnity\Assets\SuperCloud.cs" line="22" />
+      <Breakpoint file="C:\Users\chris\Dropbox\repos\KinectUnity\Assets\PointCloud.cs" line="351" />
+      <Breakpoint file="C:\Users\chris\Dropbox\repos\KinectUnity\Assets\PointCloud.cs" line="363" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />

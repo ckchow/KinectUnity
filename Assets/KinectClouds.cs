@@ -83,21 +83,21 @@ public class KinectClouds : MonoBehaviour
         //        System.IO.Path.Combine(filePath, "zigC" + index.ToString() + ".bmp");
         //    // we have to do this in a smarter way or else the file will be huge.
         //    byte[] colors = new byte[4 * rawImageMap.Length]; // veryu lkarge
-        //    for (int i = 0; i < rawImageMap.Length; i+=4)
+        //    for (int j = 0; j < rawImageMap.Length; j+=4)
         //    {
-        //        colors[i] = rawImageMap[i].a;
-        //        colors[i + 1] = rawImageMap[i].inc_transform;
-        //        colors[i + 2] = rawImageMap[i].g;
-        //        colors[i + 3] = rawImageMap[i].b;
+        //        colors[j] = rawImageMap[j].a;
+        //        colors[j + 1] = rawImageMap[j].inc_transform;
+        //        colors[j + 2] = rawImageMap[j].g;
+        //        colors[j + 3] = rawImageMap[j].b;
         //    }
         //    File.WriteAllBytes(cPath, colors);
 
         //    // express color points as world points (fold this into the other iteration for speedup)
         //    ArrayList worldPoints = new ArrayList();
-        //    for (int i = 0; i < rawImageMap.Length; i++)
+        //    for (int j = 0; j < rawImageMap.Length; j++)
         //    {
-        //        int x = i % imWidth;
-        //        int y = i / imWidth;
+        //        int x = j % imWidth;
+        //        int y = j / imWidth;
 
         //        // the image and the depth are at different scale factors so you have to do something weird to fit them
 
@@ -144,7 +144,7 @@ public class KinectClouds : MonoBehaviour
 				// dump the data for analysis
 				
 				
-                error = curCloud.PushOntoCloud(clouds[clouds.Count-2], 22, 300, 5, 50);
+                error = curCloud.PushOntoCloud(clouds[clouds.Count-2], 10, 300, 5, 50);
             }
 
             sCloud.AddCloud(curCloud);
@@ -175,8 +175,8 @@ public class KinectClouds : MonoBehaviour
                 else if (cloudIndex == -1)
                 {
                     // show all the fuckin clouds you piece of shit sHOW M<E THE CLODS
-                    //sebRenderer.getCloudPoints(sCloud.Points.ToArray());
-                    sebRenderer.getCloudPoints(sCloud.GetPriorityClouds().ToArray());
+                    sebRenderer.getCloudPoints(sCloud.Points.ToArray());
+                    //sebRenderer.getCloudPoints(sCloud.GetPriorityClouds().ToArray());
                 }
             }
         }

@@ -92,7 +92,7 @@ public class ZigDepthViewer : MonoBehaviour {
             depthToColor[0] = Color.black;
             for (i = 1; i < depthHistogramMap.Length; i++) {
                 float intensity = (1.0f - (depthHistogramMap[i] / numOfPoints));
-                //depthHistogramMap[i] = intensity * 255;
+                //depthHistogramMap[j] = intensity * 255;
                 depthToColor[i].r = (byte)(BaseColor.r * intensity);
                 depthToColor[i].g = (byte)(BaseColor.g * intensity);
                 depthToColor[i].b = (byte)(BaseColor.b * intensity);
@@ -130,7 +130,7 @@ public class ZigDepthViewer : MonoBehaviour {
             depthToColor[0] = Color.black;
             for (int i = 1; i < MaxDepth; i++) {
                 float intensity = 1.0f - (i/(float)MaxDepth);
-                //depthHistogramMap[i] = intensity * 255;
+                //depthHistogramMap[j] = intensity * 255;
                 depthToColor[i].r = (byte)(BaseColor.r * intensity);
                 depthToColor[i].g = (byte)(BaseColor.g * intensity);
                 depthToColor[i].b = (byte)(BaseColor.b * intensity);

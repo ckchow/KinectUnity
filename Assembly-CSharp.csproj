@@ -55,6 +55,8 @@
      <Compile Include="Assets\PointCloudRenderer.cs" />
      <Compile Include="Assets\Set.cs" />
      <Compile Include="Assets\SuperCloud.cs" />
+     <Compile Include="Assets\Test\CSharpTestDriver.cs" />
+     <Compile Include="Assets\Test\SomeCSharpTests.cs" />
      <Compile Include="Assets\Triad.cs" />
      <Compile Include="Assets\Triangulator.cs" />
      <Compile Include="Assets\Vertex.cs" />
@@ -86,7 +88,13 @@
      <Compile Include="Assets\ZigFu\Scripts\_Internal\Matrix3.cs" />
      <Compile Include="Assets\ZigFu\Scripts\_Internal\TimedBuffer.cs" />
      <Compile Include="Assets\ZigFu\Scripts\_Internal\kinectSpecific.cs" />
+     <None Include="Assets\tests\q.txt" />
+     <None Include="Assets\tests\w.txt" />
+     <None Include="Assets\Plugins\NUnitLite\NUnitLite.CHANGES.txt" />
      <None Include="Assets\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
+     <None Include="Assets\Plugins\NUnitLite\NUnitLiteUnityRunner.README.txt" />
+     <None Include="Assets\Plugins\NUnitLite\NUnitLite.LICENSE.txt" />
+     <None Include="Assets\Plugins\NUnitLite\NUnitLite.README.txt" />
  <Reference Include="C5">
  <HintPath>Assets\C5.dll</HintPath>
  </Reference>
@@ -98,6 +106,9 @@
  </Reference>
  <Reference Include="MathNet.Iridium">
  <HintPath>Assets\MathNet.Iridium.dll</HintPath>
+ </Reference>
+ <Reference Include="NUnitLite">
+ <HintPath>Assets\Plugins\NUnitLite\NUnitLite.dll</HintPath>
  </Reference>
  <Reference Include="OpenNI.Net">
  <HintPath>Assets\ZigFu\Scripts\_Internal\OpenNI.Net.dll</HintPath>

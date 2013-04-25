@@ -1,0 +1,22 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using NUnit.Framework;
+
+[TestFixture]
+class ICPTest
+{
+    // Stephen has provided two clouds to match
+    // format
+
+    // MSQE 0.69
+    // start MSQE 5.562
+    
+    //x
+    //y
+    //z
+
+    // R = I, T = [-1; 5; 4]
+}
+

@@ -1,0 +1,86 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using MathNet.Numerics.LinearAlgebra;
+
+// !!!!! NOTE !!!!!!
+// stuff isn't here yet, don't use this class for anything
+
+
+/// <summary>
+/// Provides facilities for solving ICP between two pointclouds and contains helper methods.
+/// </summary>
+class ICP
+{
+    PointCloud Stay;
+    PointCloud Move;
+
+    IEnumerable<CloudPoint> StayList;
+    IEnumerable<CloudPoint> MoveList;
+
+    Matrix R;
+    Vector T;
+
+    ICPAlgorithm thisAlgorithm;
+    ICPDataType thisDataType;
+
+    public ICP(PointCloud stay, PointCloud move, ICPAlgorithm alg)
+    {
+        throw new NotImplementedException("ICP extract incomplete");
+        thisAlgorithm = alg;
+        thisDataType = ICPDataType.PointCloud;
+    }
+
+    public ICP(IEnumerable<CloudPoint> stay, IEnumerable<CloudPoint> move, ICPAlgorithm alg, ICPMatching match)
+    {
+        this.StayList = stay;
+        this.MoveList = move;
+        thisAlgorithm = alg;
+        thisDataType = ICPDataType.List;
+    }
+
+    private static IEnumerable<PointMatch> FeatureMatch(PointCloud A, PointCloud B)
+    {
+        throw new NotImplementedException();
+    }
+
+
+
+    // this let's leave for later...
+    #region enums
+    public enum ICPMatching
+    {
+        BruteForce, // not implemented, seems a waste of time
+        FeatureMatching, // only works for PointClouds since they know something about their 2D depth features
+        KDTree
+    };
+
+    public enum ICPAlgorithm
+    {
+        PointToPlane,
+        PointToPoint,
+        PlaneToPlane
+    };
+
+    public enum ICPDataType
+    {
+        List,
+        PointCloud
+    };
+    #endregion
+
+    #region algorithm dictionaries
+
+    private static Dictionary<ICPMatching, Func<PointCloud, PointCloud, IEnumerable<PointMatch>>> ICPMatchingMap
+        = new Dictionary<ICPMatching, Func<PointCloud, PointCloud, IEnumerable<PointMatch>>>
+    {
+        {ICPMatching.FeatureMatching, new Func<PointCloud, PointCloud, IEnumerable<PointMatch>>((x,y) => FeatureMatch(x,y))}
+        // the rest here
+    };
+
+    #endregion 
+    
+}
+
+

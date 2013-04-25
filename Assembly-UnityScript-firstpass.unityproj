@@ -48,7 +48,13 @@
      <Compile Include="Assets\Standard Assets\Scripts\Camera Scripts\SmoothFollow.js" />
      <Compile Include="Assets\Standard Assets\Scripts\Camera Scripts\SmoothLookAt.js" />
      <Compile Include="Assets\Standard Assets\Scripts\General Scripts\DragRigidbody.js" />
+     <None Include="Assets\tests\q.txt" />
+     <None Include="Assets\tests\w.txt" />
+     <None Include="Assets\Plugins\NUnitLite\NUnitLite.CHANGES.txt" />
      <None Include="Assets\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
+     <None Include="Assets\Plugins\NUnitLite\NUnitLiteUnityRunner.README.txt" />
+     <None Include="Assets\Plugins\NUnitLite\NUnitLite.LICENSE.txt" />
+     <None Include="Assets\Plugins\NUnitLite\NUnitLite.README.txt" />
  <Reference Include="C5">
  <HintPath>Assets\C5.dll</HintPath>
  </Reference>
@@ -60,6 +66,9 @@
  </Reference>
  <Reference Include="MathNet.Iridium">
  <HintPath>Assets\MathNet.Iridium.dll</HintPath>
+ </Reference>
+ <Reference Include="NUnitLite">
+ <HintPath>Assets\Plugins\NUnitLite\NUnitLite.dll</HintPath>
  </Reference>
  <Reference Include="OpenNI.Net">
  <HintPath>Assets\ZigFu\Scripts\_Internal\OpenNI.Net.dll</HintPath>
